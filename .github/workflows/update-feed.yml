@@ -1,5 +1,8 @@
 name: Refresh official security intelligence feed
 on:
+  push:
+    paths:
+      - '.github/workflows/update-feed.yml'
   workflow_dispatch:
   schedule:
     - cron: '21 6 * * *'

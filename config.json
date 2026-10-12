@@ -4,5 +4,6 @@
   "site_url": "",
   "contact_email": "Inquiry@calculatedit.com",
   "adsense_publisher_id": "",
-  "adsense_slot_id": ""
+  "adsense_slot_id": "",
+  "ads_enabled": false
 }

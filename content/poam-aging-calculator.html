@@ -1,0 +1,32 @@
+<section class="simple-hero"><div class="wrap"><div class="eyebrow">FREE · PRIVATE · NO LOGIN</div><h1>POA&amp;M Deadline &amp; Aging Calculator</h1><p class="lead">Calculate how long an open finding has been tracked and how many days remain until your team’s target completion date. Both dates stay in your browser.</p></div></section>
+<section class="wrap section prose editorial-article">
+  <p class="resource-meta"><strong>CalculatedIT Threat Pulse free tool</strong> · No uploads · No cookies added by this calculator · Works without an account</p>
+  <div class="tool" id="poam-tool">
+    <h2>Check your milestone timing</h2>
+    <p class="muted">Enter only dates. Do not enter system names, sensitive security findings, or customer information.</p>
+    <form id="poam-aging-form">
+      <div class="fieldgrid">
+        <label for="poam-opened">Date finding was opened
+          <input type="date" id="poam-opened" name="opened" required>
+        </label>
+        <label for="poam-target">Your team’s target completion date
+          <input type="date" id="poam-target" name="target" required>
+        </label>
+      </div>
+      <button type="submit" class="btn poam-calculate">Calculate days</button>
+    </form>
+    <div class="result poam-aging-output" role="status" aria-live="polite" aria-atomic="true">
+      <small>POA&amp;M timing result</small>
+      <strong id="poam-aging-result">Select dates to calculate.</strong>
+      <span>This is simple calendar-day arithmetic, not a compliance opinion, risk rating, or federally mandated deadline.</span>
+    </div>
+  </div>
+  <h2>How to interpret your result</h2>
+  <p>The calculator compares the finding’s open date and your chosen target completion date against today’s local calendar date. A day count can support status reporting and follow-up scheduling, but it does <strong>not</strong> establish an official remediation deadline or prove that a weakness has been fixed.</p>
+  <p><strong>Federal deadlines versus your own target:</strong> If your organization is subject to a CISA KEV directive, contract, or other requirement, determine the actual applicable due date independently. A CISA KEV catalog date is not automatically every private organization’s deadline. This tool uses only the date <em>you</em> enter.</p>
+  <h2>What to do next</h2>
+  <p>If an item is nearing its target date or overdue, confirm the accountable owner, blocked milestones, residual exposure, and evidence needed to verify remediation. Keep any sensitive POA&amp;M record in your authorized internal systems, not on a public website.</p>
+  <p>For a more complete workflow, use the <a href="/kev-triage-checklist.html">KEV response checklist</a> or the <a href="/nessus-to-poam-guide.html">scan findings to POA&amp;M evidence guide</a>.</p>
+  <p class="fine">The calculator operates entirely in the browser using the dates entered. It does not save dates, send them to our servers, or certify any control or system.</p>
+</section>
+<script src="/assets/poam-aging.js" defer></script>

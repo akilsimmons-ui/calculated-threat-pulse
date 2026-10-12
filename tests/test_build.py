@@ -20,6 +20,20 @@ class TestSite(unittest.TestCase):
         self.assertIn('Ads only appear', build.ad(cfg))
         self.assertNotIn('adsbygoogle', build.ad(cfg))
 
+    def test_ads_account_verification_while_disabled(self):
+        cfg = {'site_name': 'Test', 'adsense_publisher_id': 'ca-pub-1234567890123456',
+               'adsense_slot_id': '1234567890', 'ads_enabled': False}
+        head = build.chrome(cfg, 'Title', 'Description', '<p>Content</p>')
+        self.assertIn('google-adsense-account', head)
+        self.assertNotIn('pagead2.googlesyndication.com', head)
+        self.assertIn('Ads only appear', build.ad(cfg))
+
+    def test_ads_txt_requires_real_publisher_id(self):
+        self.assertEqual(build.ads_txt_line({}), '')
+        self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'fake'}), '')
+        self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'ca-pub-1234567890123456'}),
+                         'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\\n')
+
     def test_source_validation_and_sorting(self):
         with tempfile.TemporaryDirectory() as tmp:
             file = Path(tmp) / 'kev.json'

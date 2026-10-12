@@ -88,7 +88,7 @@ def ads_txt_line(cfg):
     """Authorized AdSense seller entry; do not invent or publish an account ID."""
     publisher = cfg.get('adsense_publisher_id', '')
     if re.fullmatch(r'ca-pub-\d{16}', publisher):
-        return 'google.com, ' + publisher[3:] + ', DIRECT, f08c47fec0942fa0\\n'
+        return 'google.com, ' + publisher[3:] + ', DIRECT, f08c47fec0942fa0\n'
     return ''
 
 

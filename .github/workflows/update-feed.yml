@@ -4,6 +4,7 @@ on:
     paths:
       - '.github/workflows/update-feed.yml'
       - 'build.py'
+      - 'site_rollups.py'
       - 'config.json'
       - 'tests/**'
       - 'assets/**'

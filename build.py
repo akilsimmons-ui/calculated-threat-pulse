@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Build a real, low-maintenance, ad-supported public-information website.
+"""Build a low-maintenance, source-traceable security-information website.
 No third-party Python packages or paid APIs required.
+The daily feed refresh also republishes tools after their scheduled release gates.
 """
 import argparse
 import datetime as dt

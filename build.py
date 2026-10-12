@@ -11,6 +11,7 @@ import shutil
 import urllib.request
 from pathlib import Path
 from urllib.parse import quote
+from site_rollups import build_weekly, build_rss
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
@@ -79,10 +80,10 @@ def chrome(cfg, title, description, content, path='/'):
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="{esc(description)}"><meta name="theme-color" content="#0b1630">
 <title>{esc(title)} | {esc(name)}</title>{canonical}{social}{meta}{script}
-<link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/brand.css"></head><body>
+<link rel="alternate" type="application/rss+xml" title="CalculatedIT security updates RSS" href="/feed.xml"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/brand.css"></head><body>
 <header class="header"><div class="wrap nav"><a href="/" class="logo" aria-label="CalculatedIT Threat Pulse home"><span class="logo-plate"><img class="logo-graphic" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures" width="250" height="83"></span><span class="brand-copy"><small>THREAT PULSE</small></span></a><nav aria-label="Main navigation"><a href="/">Home</a><a href="/alerts.html">Threat feed</a><a href="/tools.html">Free tools</a><a href="/guides.html">Guides</a></nav><span class="navpill"><span class="live"></span> Official sources</span></div></header>
 <main>{content}</main>
-<footer><div class="wrap footer"><div><a href="https://calculatedit.com/" class="parent-identity" aria-label="Calculated Ventures corporate website"><img class="corporate-logo" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures logo" loading="lazy"><span><strong>{esc(name)}</strong><small>A Calculated Ventures, LLC publication</small></span></a><p>Security intelligence and practical tools. Information, not security guarantees.</p><p class="fine">Source data: CISA. Not affiliated with or endorsed by CISA or the U.S. government.</p><p class="fine">© {dt.datetime.now(dt.timezone.utc).year} Calculated Ventures, LLC</p></div><div class="footerlinks"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Contact</a><a href="/kev-triage-checklist.html">Free KEV checklist</a><a href="/nessus-to-poam-guide.html">Scan-to-POA&amp;M guide</a><a href="https://app.calculatedit.com/" rel="noopener" target="_blank">RMF Accelerator ↗</a><a href="https://calculatedit.com/" rel="noopener" target="_blank">Calculated Ventures ↗</a><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" rel="noopener" target="_blank">CISA source ↗</a></div></div></footer>
+<footer><div class="wrap footer"><div><a href="https://calculatedit.com/" class="parent-identity" aria-label="Calculated Ventures corporate website"><img class="corporate-logo" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures logo" loading="lazy"><span><strong>{esc(name)}</strong><small>A Calculated Ventures, LLC publication</small></span></a><p>Security intelligence and practical tools. Information, not security guarantees.</p><p class="fine">Source data: CISA. Not affiliated with or endorsed by CISA or the U.S. government.</p><p class="fine">© {dt.datetime.now(dt.timezone.utc).year} Calculated Ventures, LLC</p></div><div class="footerlinks"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Contact</a><a href="/weekly-briefing.html">Seven-day briefing</a><a href="/feed.xml">RSS updates</a><a href="/rmf-evidence-pilot.html">RMF pilot offer</a><a href="/kev-triage-checklist.html">Free KEV checklist</a><a href="/nessus-to-poam-guide.html">Scan-to-POA&amp;M guide</a><a href="https://app.calculatedit.com/" rel="noopener" target="_blank">RMF Accelerator ↗</a><a href="https://calculatedit.com/" rel="noopener" target="_blank">Calculated Ventures ↗</a><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" rel="noopener" target="_blank">CISA source ↗</a></div></div></footer>
 </body></html>'''
 
 
@@ -114,7 +115,7 @@ def accelerator_cta(compact=False):
 <p>Convert customer-provided Nessus / ACAS scan findings into structured draft POA&amp;M materials, remediation recommendations, and review-ready RMF outputs with expert quality assurance. Every output requires human validation.</p>
 <div class="accelerator-actions">
 <a class="accelerator-button" href="https://app.calculatedit.com/" target="_blank" rel="noopener">Explore RMF Accelerator ↗</a>
-<a class="accelerator-link" href="mailto:Inquiry@calculatedit.com?subject=RMF%20Evidence%20Acceleration%20Pilot%20Inquiry">Request a $2,500 pilot →</a></div>
+<a class="accelerator-link" href="/rmf-evidence-pilot.html">See the $2,500 pilot details →</a></div>
 <p class="accelerator-note">Optional paid service by Calculated Ventures, LLC. The free security feed and tools remain available without a purchase.</p>
 </div></div></div></section>'''
 
@@ -128,7 +129,7 @@ def alert_card(r):
     cve = r['cveID']
     cve_url = 'https://nvd.nist.gov/vuln/detail/' + quote(cve)
     action = r['requiredAction'] or 'Review the vendor advisory and assess exposure.'
-    return f'''<article class="threat-card" data-search="{esc(' '.join([r['cveID'], r['vendorProject'], r['product'], r['vulnerabilityName']]).lower())}">
+    return f'''<article id="{esc(cve)}" class="threat-card" data-search="{esc(' '.join([r['cveID'], r['vendorProject'], r['product'], r['vulnerabilityName']]).lower())}">
 <div class="threat-top"><span class="cve">{esc(cve)}</span><span class="date">Added {esc(r['dateAdded'])}</span></div>
 <h3>{esc(r['vulnerabilityName'] or r['vendorProject'] + ' ' + r['product'])}</h3>
 <p class="muted">{esc(r['vendorProject'])} · {esc(r['product'])}</p>
@@ -146,7 +147,7 @@ def build():
     cards = ''.join(alert_card(r) for r in rows[:6]) if rows else '<div class="empty">Threat data hasn’t been downloaded yet. Run <code>python build.py --fetch</code> when connected to the internet, or enable the daily GitHub Actions workflow.</div>'
     today = dt.datetime.now(dt.timezone.utc).strftime('%B %d, %Y')
     body = f'''<section class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">FREE TOOLS · VERIFIED SOURCES · DAILY UPDATES</div><h1>Know the risks.<br><em>Focus on what matters.</em></h1><p class="lead">A simpler way to spot actively exploited software vulnerabilities and make better security decisions. Built for small businesses and busy IT teams.</p><div class="buttons"><a class="btn" href="/alerts.html">Explore live threat feed <span>↗</span></a><a class="btn-secondary" href="/tools.html">Use free tools →</a></div><div class="subline"><span class="live"></span> CISA KEV official source <span class="separator">•</span> No sign-up required</div></div><div class="hero-panel"><div class="panel-head"><span>THREAT INTELLIGENCE</span><span class="signal">SOURCE: CISA</span></div><div class="bigstat">{len(rows):,}<span>tracked</span></div><p>Known exploited vulnerabilities in source feed</p><div class="panel-divider"></div><div class="statsrow"><div><small>Latest addition</small><b>{esc(rows[0]['dateAdded'] if rows else 'Not loaded')}</b></div><div><small>Feed edition</small><b>{esc(version or 'Not loaded')}</b></div></div><div class="panel-note">Records are evidence of known exploitation, not proof your systems are vulnerable.</div></div></div></section>
-<section class="section wrap"><div class="section-top"><div><div class="eyebrow dark">THE LATEST</div><h2>Recently added advisories</h2><p class="muted">Automatically pulled from the public CISA Known Exploited Vulnerabilities catalog. <a href="/alerts.html">Browse more →</a></p></div></div><div class="cardgrid">{cards}</div><div class="source-note">Source: <a href="{esc(CISA_URL)}">CISA KEV JSON</a>. Feed release: {esc(released or 'Not available')}. Page built {esc(today)} UTC. See CISA for authoritative updates.</div></section>
+<section class="section wrap"><div class="section-top"><div><div class="eyebrow dark">THE LATEST</div><h2>Recently added advisories</h2><p class="muted">Automatically pulled from the public CISA Known Exploited Vulnerabilities catalog. <a href="/alerts.html">Browse more →</a> · <a href="/weekly-briefing.html">7-day briefing →</a> · <a href="/feed.xml">RSS updates →</a></p></div></div><div class="cardgrid">{cards}</div><div class="source-note">Source: <a href="{esc(CISA_URL)}">CISA KEV JSON</a>. Feed release: {esc(released or 'Not available')}. Page built {esc(today)} UTC. See CISA for authoritative updates.</div></section>
 <section class="section pale"><div class="wrap"><div class="eyebrow dark">ACTIONABLE, NOT ALARMIST</div><h2>Free calculators and checklists</h2><p class="muted intro">Practical tools to turn security questions into actionable decisions.</p><div class="featuregrid"><a class="feature" href="/tools.html#downtime"><div class="feature-icon">⌁</div><h3>Downtime cost calculator</h3><p>Estimate operational losses from a service interruption using your own assumptions.</p><span>Open calculator →</span></a><a class="feature" href="/tools.html#password"><div class="feature-icon">✳</div><h3>Passphrase strength planner</h3><p>Compare lengths and character set sizes without entering your actual password.</p><span>Open calculator →</span></a><a class="feature" href="/guides.html"><div class="feature-icon">✓</div><h3>Risk response guides</h3><p>Understand prioritization, MFA rollout, and the first hour of an incident.</p><span>Read the guides →</span></a></div></div></section>
 <section class="wrap section"><div class="eyebrow dark">FIELD-READY PLAYBOOKS</div><h2>Free checklists for work that matters</h2><p class="muted intro">Go beyond an alert: document an exposure decision and trace scan findings to a reviewed action plan.</p><div class="featuregrid"><a class="feature" href="/kev-triage-checklist.html"><div class="feature-icon">✓</div><h3>KEV triage checklist + CSV</h3><p>Seven evidence-based checks and a blank spreadsheet for assigning, tracking, and verifying a vulnerability response.</p><span>Download the worksheet →</span></a><a class="feature" href="/nessus-to-poam-guide.html"><div class="feature-icon">↗</div><h3>Nessus / ACAS to POA&amp;M</h3><p>Keep scan evidence traceable, handle uncertain mappings, and verify remediation without invented findings.</p><span>Read the evidence guide →</span></a></div></section>
 {accelerator_cta()}<section class="wrap section">{ad(cfg)}<div class="editorial"><div><div class="eyebrow dark">THE CALCULATEDIT METHOD</div><h2>Practical advice, grounded in public evidence.</h2></div><p>We link back to primary sources rather than inventing vulnerability severity scores or pretending automated summaries are expert assessments. Verify applicability to your environment before acting.</p></div></section>'''
@@ -172,7 +173,16 @@ def build():
 <p>Primary references: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" rel="noopener" target="_blank">CISA Known Exploited Vulnerabilities catalog</a> and <a href="https://csrc.nist.gov/pubs/sp/800/40/r4/final" rel="noopener" target="_blank">NIST SP 800-40 Rev. 4, Enterprise Patch Management Planning</a>. Always review the current vendor advisory before modifying a system.</p></article></section>{accelerator_cta(compact=True)}<section class="wrap section prose">{ad_here}</section>'''.replace('{ad_here}', ad(cfg))
     write_page(cfg, 'guides.html', 'Small-business security guides', 'Original guides to vulnerability prioritization, MFA adoption, and incident response with primary-source links.', guides)
 
+    write_page(cfg, 'weekly-briefing.html', 'Seven-day CISA KEV briefing',
+               'Automatically refreshed seven-day CISA KEV additions plus a responsible vulnerability response checklist.',
+               build_weekly(rows, version, released) + accelerator_cta(compact=True))
+    feed_xml = build_rss(rows, cfg.get('site_url', ''))
+    if feed_xml:
+        (PUBLIC / 'feed.xml').write_text(feed_xml, encoding='utf-8')
+
     for filename, title, description in (
+        ('rmf-evidence-pilot.html', 'RMF Evidence Acceleration Pilot — $2,500',
+         'A scoped $2,500 human-reviewed RMF Evidence Acceleration Pilot using Nessus and ACAS exports to draft POA&M artifacts.'),
         ('kev-triage-checklist.html', 'CISA KEV triage checklist and free CSV', 'A seven-step KEV exposure response checklist with a downloadable vulnerability triage spreadsheet for small IT teams.'),
         ('nessus-to-poam-guide.html', 'Nessus and ACAS to POA&M evidence guide', 'A practical, source-backed RMF workflow for translating scan findings into traceable draft POA&M evidence and reviewable remediation.'),
     ):
@@ -193,7 +203,7 @@ def build():
     (PUBLIC / 'robots.txt').write_text('User-agent: *\nAllow: /\n' + (f'Sitemap: {cfg["site_url"].rstrip("/")}/sitemap.xml\n' if cfg.get('site_url', '').startswith('https://') else ''), encoding='utf-8')
     if cfg.get('site_url', '').startswith('https://'):
         url = cfg['site_url'].rstrip('/')
-        pages = ['/', '/alerts.html', '/tools.html', '/guides.html', '/kev-triage-checklist.html', '/nessus-to-poam-guide.html', '/about.html', '/contact.html', '/privacy.html']
+        pages = ['/', '/alerts.html', '/tools.html', '/guides.html', '/kev-triage-checklist.html', '/nessus-to-poam-guide.html', '/weekly-briefing.html', '/rmf-evidence-pilot.html', '/about.html', '/contact.html', '/privacy.html']
         (PUBLIC / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(f'<url><loc>{esc(url+p)}</loc></url>' for p in pages) + '</urlset>', encoding='utf-8')
     ads_line = ads_txt_line(cfg)
     if ads_line:

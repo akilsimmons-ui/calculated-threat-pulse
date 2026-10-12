@@ -32,7 +32,7 @@ class TestSite(unittest.TestCase):
         self.assertEqual(build.ads_txt_line({}), '')
         self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'fake'}), '')
         self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'ca-pub-1234567890123456'}),
-                         'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\\n')
+                         'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\n')
 
     def test_source_validation_and_sorting(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -78,6 +78,41 @@ class TestSite(unittest.TestCase):
                                today=dt.date(2026, 10, 12))
         self.assertIn('No new entries', content)
 
+    def test_poam_calculator_staged_until_next_refresh(self):
+        before = dt.datetime(2026, 10, 12, 6, 19, tzinfo=dt.timezone.utc)
+        after = dt.datetime(2026, 10, 12, 6, 21, tzinfo=dt.timezone.utc)
+        self.assertFalse(build.poam_tool_release_ready(before))
+        self.assertTrue(build.poam_tool_release_ready(after))
+        with tempfile.TemporaryDirectory() as tmp:
+            public = Path(tmp)
+            with patch.object(build, 'PUBLIC', public):
+                with patch.object(build, 'poam_tool_release_ready', return_value=False):
+                    build.build()
+                self.assertFalse((public / 'poam-aging-calculator.html').exists())
+                self.assertNotIn('/poam-aging-calculator.html',
+                                 (public / 'sitemap.xml').read_text())
+                self.assertNotIn('POA&amp;M aging calculator',
+                                 (public / 'index.html').read_text())
+                with patch.object(build, 'poam_tool_release_ready', return_value=True):
+                    build.build()
+                self.assertTrue((public / 'poam-aging-calculator.html').exists())
+                self.assertIn('/poam-aging-calculator.html',
+                              (public / 'sitemap.xml').read_text())
+                self.assertIn('poam-aging-calculator.html',
+                              (public / 'index.html').read_text())
+                self.assertIn('/assets/poam-aging.js',
+                              (public / 'poam-aging-calculator.html').read_text())
+                self.assertNotIn('pagead2.googlesyndication.com',
+                                 (public / 'poam-aging-calculator.html').read_text())
+
+    def test_poam_javascript_is_privacy_first(self):
+        src = (Path(__file__).resolve().parents[1] / 'assets' / 'poam-aging.js').read_text()
+        for banned in ('fetch(', 'localStorage', 'sessionStorage', 'XMLHttpRequest',
+                       'sendBeacon', 'document.cookie'):
+            self.assertNotIn(banned, src)
+        self.assertIn('aria-live="polite"', (Path(__file__).resolve().parents[1] /
+                                            'content' / 'poam-aging-calculator.html').read_text())
+
     def test_source_validation_and_sorting(self):
         with tempfile.TemporaryDirectory() as tmp:
             file = Path(tmp) / 'kev.json'

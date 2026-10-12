@@ -13,7 +13,7 @@ def esc(value):
 
 def build_weekly(rows, version, released, today=None):
     today = today or dt.datetime.now(dt.timezone.utc).date()
-    start = today - dt.timedelta(days=7)
+    start = today - dt.timedelta(days=6)
     recent = [r for r in rows if start.isoformat() <= r['dateAdded'] <= today.isoformat()]
     if recent:
         summary = f'{len(recent)} KEV catalog entries were added during this seven-day window.'

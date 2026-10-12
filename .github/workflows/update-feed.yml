@@ -3,6 +3,10 @@ on:
   push:
     paths:
       - '.github/workflows/update-feed.yml'
+      - 'build.py'
+      - 'config.json'
+      - 'tests/**'
+      - 'assets/**'
   workflow_dispatch:
   schedule:
     - cron: '21 6 * * *'

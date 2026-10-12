@@ -57,6 +57,14 @@ def load_data():
     return clean, str(data.get('dateReleased', '')), str(data.get('catalogVersion', ''))
 
 
+def poam_tool_release_ready(now=None):
+    """Release only on/after the next 06:21 UTC scheduled KEV refresh."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    if now.tzinfo is None:
+        raise ValueError('Release gate requires a timezone-aware datetime')
+    return now >= dt.datetime(2026, 10, 12, 6, 20, tzinfo=dt.timezone.utc)
+
+
 def chrome(cfg, title, description, content, path='/'):
     name = cfg['site_name']
     origin = cfg.get('site_url', '').rstrip('/')
@@ -71,6 +79,10 @@ def chrome(cfg, title, description, content, path='/'):
               f'<meta name="twitter:description" content="{esc(description)}">')
     if origin.startswith('https://'):
         social += f'<meta property="og:url" content="{esc(origin + path)}">'
+    if poam_tool_release_ready():
+        calculator_link = '<a href="/poam-aging-calculator.html">POA&amp;M deadline calculator</a>'
+    else:
+        calculator_link = ''
     ads_id = cfg.get('adsense_publisher_id', '')
     script = ''
     meta = f'<meta name="google-adsense-account" content="{esc(ads_id)}">' if re.fullmatch(r'ca-pub-\d{16}', ads_id) else ''
@@ -83,7 +95,7 @@ def chrome(cfg, title, description, content, path='/'):
 <link rel="alternate" type="application/rss+xml" title="CalculatedIT security updates RSS" href="/feed.xml"><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/brand.css"></head><body>
 <header class="header"><div class="wrap nav"><a href="/" class="logo"><span class="logo-plate"><img class="logo-graphic" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures" width="250" height="83"></span><span class="brand-copy"><small>THREAT PULSE</small></span></a><nav aria-label="Main navigation"><a href="/">Home</a><a href="/alerts.html">Threat feed</a><a href="/tools.html">Free tools</a><a href="/guides.html">Guides</a></nav><span class="navpill"><span class="live"></span> Official sources</span></div></header>
 <main>{content}</main>
-<footer><div class="wrap footer"><div><a href="https://calculatedit.com/" class="parent-identity"><img class="corporate-logo" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures logo" width="650" height="305" loading="lazy"><span><strong>{esc(name)}</strong><small>A Calculated Ventures, LLC publication</small></span></a><p>Security intelligence and practical tools. Information, not security guarantees.</p><p class="fine">Source data: CISA. Not affiliated with or endorsed by CISA or the U.S. government.</p><p class="fine">© {dt.datetime.now(dt.timezone.utc).year} Calculated Ventures, LLC</p></div><div class="footerlinks"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Contact</a><a href="/weekly-briefing.html">Seven-day briefing</a><a href="/feed.xml">RSS updates</a><a href="/rmf-evidence-pilot.html">RMF pilot offer</a><a href="/kev-triage-checklist.html">Free KEV checklist</a><a href="/nessus-to-poam-guide.html">Scan-to-POA&amp;M guide</a><a href="https://app.calculatedit.com/" rel="noopener" target="_blank">RMF Accelerator ↗</a><a href="https://calculatedit.com/" rel="noopener" target="_blank">Calculated Ventures ↗</a></div></div></footer>
+<footer><div class="wrap footer"><div><a href="https://calculatedit.com/" class="parent-identity"><img class="corporate-logo" src="https://calculatedit.com/wp-content/uploads/2023/05/cropped-output-onlinejpgtools-1.png" alt="Calculated Ventures logo" width="650" height="305" loading="lazy"><span><strong>{esc(name)}</strong><small>A Calculated Ventures, LLC publication</small></span></a><p>Security intelligence and practical tools. Information, not security guarantees.</p><p class="fine">Source data: CISA. Not affiliated with or endorsed by CISA or the U.S. government.</p><p class="fine">© {dt.datetime.now(dt.timezone.utc).year} Calculated Ventures, LLC</p></div><div class="footerlinks"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Contact</a><a href="/weekly-briefing.html">Seven-day briefing</a><a href="/feed.xml">RSS updates</a><a href="/rmf-evidence-pilot.html">RMF pilot offer</a><a href="/kev-triage-checklist.html">Free KEV checklist</a><a href="/nessus-to-poam-guide.html">Scan-to-POA&amp;M guide</a>{calculator_link}<a href="https://app.calculatedit.com/" rel="noopener" target="_blank">RMF Accelerator ↗</a><a href="https://calculatedit.com/" rel="noopener" target="_blank">Calculated Ventures ↗</a></div></div></footer>
 </body></html>'''
 
 
@@ -151,6 +163,17 @@ def build():
 <section class="section pale"><div class="wrap"><div class="eyebrow dark">ACTIONABLE, NOT ALARMIST</div><h2>Free calculators and checklists</h2><p class="muted intro">Practical tools to turn security questions into actionable decisions.</p><div class="featuregrid"><a class="feature" href="/tools.html#downtime"><div class="feature-icon">⌁</div><h3>Downtime cost calculator</h3><p>Estimate operational losses from a service interruption using your own assumptions.</p><span>Open calculator →</span></a><a class="feature" href="/tools.html#password"><div class="feature-icon">✳</div><h3>Passphrase strength planner</h3><p>Compare lengths and character set sizes without entering your actual password.</p><span>Open calculator →</span></a><a class="feature" href="/guides.html"><div class="feature-icon">✓</div><h3>Risk response guides</h3><p>Understand prioritization, MFA rollout, and the first hour of an incident.</p><span>Read the guides →</span></a></div></div></section>
 <section class="wrap section"><div class="eyebrow dark">FIELD-READY PLAYBOOKS</div><h2>Free checklists for work that matters</h2><p class="muted intro">Go beyond an alert: document an exposure decision and trace scan findings to a reviewed action plan.</p><div class="featuregrid"><a class="feature" href="/kev-triage-checklist.html"><div class="feature-icon">✓</div><h3>KEV triage checklist + CSV</h3><p>Seven evidence-based checks and a blank spreadsheet for assigning, tracking, and verifying a vulnerability response.</p><span>Download the worksheet →</span></a><a class="feature" href="/nessus-to-poam-guide.html"><div class="feature-icon">↗</div><h3>Nessus / ACAS to POA&amp;M</h3><p>Keep scan evidence traceable, handle uncertain mappings, and verify remediation without invented findings.</p><span>Read the evidence guide →</span></a></div></section>
 {accelerator_cta()}<section class="wrap section">{ad(cfg)}<div class="editorial"><div><div class="eyebrow dark">THE CALCULATEDIT METHOD</div><h2>Practical advice, grounded in public evidence.</h2></div><p>We link back to primary sources rather than inventing vulnerability severity scores or pretending automated summaries are expert assessments. Verify applicability to your environment before acting.</p></div></section>'''
+    if poam_tool_release_ready():
+        # Reveal the tool as part of the scheduled KEV refresh, never during tonight's build.
+        old = '<span>Read the evidence guide →</span></a></div></section>'
+        new = ('<span>Read the evidence guide →</span></a>'
+               '<a class="feature" href="/poam-aging-calculator.html">'
+               '<div class="feature-icon">◷</div><h3>POA&amp;M aging calculator</h3>'
+               '<p>Check how long a finding has been open and how close your target milestone is.'
+               ' No uploads or accounts.</p><span>Open free calculator →</span></a></div></section>')
+        if old not in body:
+            raise RuntimeError('Home feature anchor not found; refusing to build a broken release')
+        body = body.replace(old, new, 1)
     write_page(cfg, 'index.html', 'Daily security intelligence & free tools', 'Practical free security tools and automatically refreshed CISA KEV alerts for small IT teams.', body)
 
     alerts = ''.join(alert_card(r) for r in rows[:200]) if rows else '<p class="empty">No official feed was cached. Contact the operator or check CISA directly for the latest updates.</p>'
@@ -158,7 +181,29 @@ def build():
     write_page(cfg, 'alerts.html', 'CISA known exploited vulnerabilities', 'Search up to 200 recent CISA known exploited vulnerability records by CVE, product or vendor.', body)
 
     tools = '''<section class="simple-hero"><div class="wrap"><div class="eyebrow">USEFUL · PRIVATE · FREE</div><h1>Security planning tools</h1><p class="lead">Fast, transparent estimates you can use without submitting personal information. Calculations run in your browser.</p></div></section><section class="wrap section tool-layout"><article id="downtime" class="tool"><div class="eyebrow dark">OPERATIONS</div><h2>Downtime cost estimator</h2><p class="muted">For planning only. Enter your own assumptions; this is not a predictive model.</p><div class="fieldgrid"><label>Employees affected<input id="workers" type="number" min="0" max="100000" value="15"></label><label>Fully loaded hourly cost ($)<input id="hourly" type="number" min="0" max="100000" value="65"></label><label>Downtime (hours)<input id="hours" type="number" min="0" max="10000" step="0.5" value="4"></label><label>Estimated lost revenue per hour ($)<input id="revenue" type="number" min="0" max="10000000" value="500"></label></div><div class="result"><small>Illustrative total interruption impact</small><strong id="downtime-result">—</strong><span>Labor cost + revenue impact; may overstate losses when the same activity is counted twice.</span></div></article><article id="password" class="tool"><div class="eyebrow dark">ACCOUNT HYGIENE</div><h2>Passphrase length planner</h2><p class="muted">Never enter a real password here. This is a theoretical search-space comparison, not an estimate of actual resistance to attacks.</p><div class="fieldgrid"><label>Hypothetical random characters<input id="chars" type="number" min="1" max="100" value="16"></label><label>Hypothetical character set<select id="charset"><option value="26">Lowercase letters (26)</option><option value="52">Mixed-case letters (52)</option><option value="62" selected>Letters + digits (62)</option><option value="94">Letters + digits + symbols (94)</option></select></label></div><div class="result"><small>Theoretical entropy, only if uniformly random</small><strong id="password-result">—</strong><span>Real human-chosen passwords have less entropy. Use unique passphrases, a password manager, and MFA.</span></div></article></section><section class="wrap section"><div class="callout"><h3>Where to go after the estimate</h3><p>For account defenses, consult <a href="https://www.cisa.gov/secure-our-world/use-strong-passwords" target="_blank" rel="noopener">CISA guidance on passwords</a>. For incident preparedness, see the <a href="https://www.cisa.gov/resources-tools/resources/incident-response-plan-irp-basics" target="_blank" rel="noopener">CISA incident response planning guide</a>.</p></div></section><script src="/assets/app.js" defer></script>'''
-    write_page(cfg, 'tools.html', 'Free security calculators', 'Downtime costs and passphrase search-space calculators that run in the browser.', tools)
+    if poam_tool_release_ready():
+        tool_card = ('<section class="wrap section"><div class="resource-callout">'
+                     '<h2>POA&amp;M deadline &amp; aging calculator</h2>'
+                     '<p>Track the calendar-day age of an open finding and count days until'
+                     ' your chosen remediation target date. Entirely in-browser;'
+                     ' no uploads, stored data, or accounts.</p>'
+                     '<p><a href="/poam-aging-calculator.html">Open the free POA&amp;M calculator →</a></p>'
+                     '</div></section>')
+        anchor = '<section class="wrap section"><div class="callout">'
+        if anchor not in tools:
+            raise RuntimeError('Tools anchor not found; refusing broken release')
+        tools = tools.replace(anchor, tool_card + anchor, 1)
+        source = ROOT / 'content' / 'poam-aging-calculator.html'
+        if not source.is_file():
+            raise FileNotFoundError(f'Missing staged tool: {source}')
+        write_page(cfg, 'poam-aging-calculator.html',
+                   'Free POA&M deadline and finding aging calculator',
+                   'Calculate days open and days until your POA&M milestone target, privately in your browser with no account or uploads.',
+                   source.read_text(encoding='utf-8') + accelerator_cta(compact=True))
+    else:
+        # A delayed or manually invoked earlier build must not publish the staged page.
+        (PUBLIC / 'poam-aging-calculator.html').unlink(missing_ok=True)
+    write_page(cfg, 'tools.html', 'Free security calculators', 'Downtime costs, passphrase planning and POA&M milestone aging calculators that run in the browser.', tools)
 
     guides = '''<section class="simple-hero"><div class="wrap"><div class="eyebrow">PRACTICAL LEARNING</div><h1>Security guides for small teams</h1><p class="lead">A starting point for better decisions. These guides are general educational material, not incident-specific professional advice.</p></div></section><section class="wrap section"><div class="eyebrow dark">FREE FIELD RESOURCES</div><h2>Start with a usable checklist</h2><div class="featuregrid"><a class="feature" href="/kev-triage-checklist.html"><h3>KEV triage checklist</h3><p>Seven steps, worked example, and downloadable blank CSV.</p><span>Open checklist →</span></a><a class="feature" href="/nessus-to-poam-guide.html"><h3>Scan findings to POA&amp;M</h3><p>Documentation quality, source traceability, and human review.</p><span>Open guide →</span></a></div></section><section class="wrap section prose"><article><div class="eyebrow dark">GUIDE 01</div><h2>Prioritize vulnerabilities by exposure and exploitation</h2><p>Not every vulnerability is equally urgent. Start with software you actually operate, then determine whether a vulnerable version is present and reachable. An entry in the CISA Known Exploited Vulnerabilities catalog is evidence that exploitation has been observed in the wild, so it is a practical input into prioritization rather than merely a theoretical score.</p><p>Build a simple triage record that includes the asset owner, version, network accessibility, vulnerability reference, compensating controls, remediation owner, and verification date. Compare available vendor remediation guidance to the CISA required action; don't automatically assume a patch is suitable for your environment.</p><p>Federal agencies have specific CISA deadlines. Private businesses can use the dates as useful signals, but should set their own risk-based commitments. Test mitigations in an appropriate environment and track exceptions. Primary source: <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA KEV catalog</a>.</p></article><article><div class="eyebrow dark">GUIDE 02</div><h2>Roll out multifactor authentication without causing chaos</h2><p>Start with privileged accounts, email, VPN, and critical business systems. Identify any service accounts or legacy applications that cannot support MFA before enforcing policies broadly. Prefer phishing-resistant MFA when your platforms support it.</p><p>Prepare recovery procedures before deployment: backup factors, help-desk identity verification, and a clear process for lost devices. Test with a small group, monitor lockouts, then expand. MFA reduces account compromise risks but is not a substitute for patching, device protection, and good access management.</p><p>Primary sources: <a href="https://www.cisa.gov/secure-our-world/turn-mfa">CISA MFA guidance</a> and <a href="https://pages.nist.gov/800-63-4/sp800-63b.html">NIST digital identity guidance</a>.</p></article><article><div class="eyebrow dark">GUIDE 03</div><h2>The first hour after a suspected security incident</h2><p>Keep people safe, assess what is happening, preserve evidence, and activate your organization's incident response procedures. Record the time and source of each observation. Isolate affected systems when appropriate, but consider operational consequences and evidence preservation before altering or powering them off.</p><p>Notify the responsible incident commander, IT/security leadership, and legal or compliance teams as required by your organization. Don't promise that a system is clean until there is evidence. Maintain a single decision log covering hypotheses, actions, and owners.</p><p>Reporting duties differ by sector and jurisdiction. Your actual plan and applicable law govern. Primary source: <a href="https://www.cisa.gov/resources-tools/resources/incident-response-plan-irp-basics">CISA incident response plan basics</a>.</p></article><article><div class="eyebrow dark">OPERATIONAL PLAYBOOK</div><h2>Turn a CISA KEV alert into a patch decision you can defend</h2>
 <p>Receiving a vulnerability alert is not the same as knowing whether your organization is exposed. Here is a repeatable seven-step approach for a small IT team that lacks a dedicated threat intelligence function. The objective is a documented decision and verified action, not a dashboard full of red numbers.</p>
@@ -204,6 +249,8 @@ def build():
     if cfg.get('site_url', '').startswith('https://'):
         url = cfg['site_url'].rstrip('/')
         pages = ['/', '/alerts.html', '/tools.html', '/guides.html', '/kev-triage-checklist.html', '/nessus-to-poam-guide.html', '/weekly-briefing.html', '/rmf-evidence-pilot.html', '/about.html', '/contact.html', '/privacy.html']
+        if poam_tool_release_ready():
+            pages.append('/poam-aging-calculator.html')
         (PUBLIC / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(f'<url><loc>{esc(url+p)}</loc></url>' for p in pages) + '</urlset>', encoding='utf-8')
     ads_line = ads_txt_line(cfg)
     if ads_line:

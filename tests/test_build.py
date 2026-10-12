@@ -17,7 +17,7 @@ class TestSite(unittest.TestCase):
 
     def test_no_ads_enabled_for_bad_publisher(self):
         cfg = {'adsense_publisher_id': 'example', 'adsense_slot_id': '123'}
-        self.assertIn('Ads only appear', build.ad(cfg))
+        self.assertEqual(build.ad(cfg), '')
         self.assertNotIn('adsbygoogle', build.ad(cfg))
 
     def test_ads_account_verification_while_disabled(self):
@@ -33,6 +33,23 @@ class TestSite(unittest.TestCase):
         self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'fake'}), '')
         self.assertEqual(build.ads_txt_line({'adsense_publisher_id': 'ca-pub-1234567890123456'}),
                          'google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0\n')
+
+    def test_editorial_pages_are_present_and_usable(self):
+        root = Path(__file__).resolve().parents[1]
+        for path in ['content/kev-triage-checklist.html',
+                     'content/nessus-to-poam-guide.html']:
+            page = (root / path).read_text(encoding='utf-8')
+            self.assertIn('rel="noopener"', page)
+            self.assertIn('h1>', page)
+        self.assertIn('CVE,Asset ID', (root / 'assets/kev-triage-template.csv').read_text())
+
+    def test_social_metadata_and_canonical(self):
+        cfg = {'site_name':'Test Pulse', 'site_url':'https://pulse.example.test', 'ads_enabled':False}
+        page = build.chrome(cfg, 'Useful checklist', 'A practical original guide.', '<p>Guide</p>',
+                            '/kev-triage-checklist.html')
+        self.assertIn('https://pulse.example.test/kev-triage-checklist.html', page)
+        self.assertIn('property="og:title"', page)
+        self.assertNotIn('pagead2.googlesyndication.com', page)
 
     def test_source_validation_and_sorting(self):
         with tempfile.TemporaryDirectory() as tmp:

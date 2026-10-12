@@ -24,7 +24,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           rm -f .github/workflows/update-feed.yml
-          git add .gitignore README.md build.py ai_draft.py config.json assets tests
+          git add .gitignore README.md build.py ai_draft.py config.json assets tests data/kev.json
           git add -f public
           git rm -f CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip
           if ! git diff --cached --quiet; then

@@ -71,3 +71,16 @@
 .resource-callout{margin:25px 0;padding:24px 28px;background:#eef4fc;border-left:4px solid #3155e7;border-radius:7px}
 .resource-callout p:last-child{margin-bottom:0}
 @media(max-width:760px){.editorial-article .resource-callout{padding:19px}.editorial-article h2{margin-top:26px}}
+
+
+/* Accessibility pass: strong contrast for small metadata, and visual
+   link distinction in prose without relying on color alone. */
+.date,.threat-bottom,.source-note,.filterline span{color:#42526c}
+.feature p,.editorial p{color:#465773}
+.footer .fine{color:#bdcde2}
+.result span{color:#36584c}
+.source-note a,.editorial a,.prose p a,.prose li a,.resource-callout a,
+.threat-bottom a,.footerlinks a{text-decoration:underline;text-underline-offset:3px}
+.source-note a:hover,.editorial a:hover,.prose a:hover,.threat-bottom a:hover{text-decoration-thickness:2px}
+a:focus-visible{outline:2px solid #3155e7;outline-offset:3px}
+.footer a:focus-visible,.header a:focus-visible{outline-color:#fff}

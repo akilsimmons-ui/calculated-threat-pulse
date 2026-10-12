@@ -16,7 +16,7 @@
 
 ### Site ownership and advertising
 
-The AdSense publisher ID and advertising slot remain empty in `config.json`; `ads_enabled` is false. On applying for AdSense, follow Google's current domain-level onboarding process for `calculatedit.com` (it generally does not accept independently entered first-party subdomains). Enter the real assigned `ca-pub-` publisher ID when issued and rebuild the site; this inserts a non-serving account-verification meta tag and, where applicable, generates `public/ads.txt`. Do **not** set `ads_enabled` to true until approval and any required privacy/consent implementation are finished. Google reviews site quality and does not guarantee approval or ad revenue.
+AdSense ownership verification is configured for publisher `ca-pub-2434177642573389`. The WordPress homepage on `calculatedit.com` has the verification meta tag through AIOSEO; Threat Pulse also has the non-serving verification meta tag and `public/ads.txt`. The advertising slot is empty and `ads_enabled` is **false** while Google reviews the account and site. Do **not** set `ads_enabled` to true until approval and applicable privacy/consent work are finished. Google reviews site quality and does not guarantee approval or ad revenue.
 
 This publication must offer substantial, truthful editorial utility beyond CISA's republished feed. Always verify automated cybersecurity information against current primary sources. We are not promising passive income; evaluate traffic and useful engagement before spending on monetization.
 
@@ -26,7 +26,16 @@ This publication must offer substantial, truthful editorial utility beyond CISA'
 - Corporate identity is shared through the brand palette and an image linked from the live Calculated Ventures website.
 - The source stays separate from the private RMF Accelerator software. Do not copy credentials, Nessus data, scripts, or client material into a public repo.
 - The live site uses a Render-provided static hostname plus the existing `pulse.calculatedit.com` custom subdomain; no new domain purchase was necessary.
-- The published site needs editorial review before enabling advertising.
+- The published site has original security guides and source citations; editorial and privacy review remain ongoing before ad serving.
+
+## Original resources and organic discovery
+
+- Free CISA KEV response worksheet: `/kev-triage-checklist.html`, with downloadable blank CSV `/assets/kev-triage-template.csv`.
+- Nessus / ACAS to reviewable POA&M evidence guide: `/nessus-to-poam-guide.html`.
+- Both are independently indexable, have descriptions/canonical and social sharing tags, are linked from the homepage and guides page, and appear in the XML sitemap.
+- Public Google Search Console setup is **not** yet confirmed. Owner must connect the `https://pulse.calculatedit.com/` URL-prefix property or domain property, verify it, and submit `https://pulse.calculatedit.com/sitemap.xml`. Do not claim indexing before Search Console shows it.
+- Recommended distribution: useful LinkedIn security posts linking to the most relevant free article, direct non-spam outreach to opted-in contacts, relevant Chamber/contractor resource directories, and guest references where there is an audience. Avoid purchased/bot traffic, bulk unsolicited mail, and ad-click swaps.
+- Check a weekly scorecard of Search Console clicks, search impressions, organic landing pages, engaged reader feedback, and **qualified pilot inquiries**. Do not confuse traffic with conversion.
 
 ## Local test
 

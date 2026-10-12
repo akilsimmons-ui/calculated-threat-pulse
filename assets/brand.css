@@ -58,3 +58,16 @@
 .accelerator-link:hover,.accelerator-link:focus-visible{color:#fff}
 .accelerator-section .accelerator-note{margin:19px 0 0;color:#afc6e3;font-size:12px}
 @media(max-width:680px){.accelerator-section{padding:26px 0}.accelerator-copy{padding:28px 22px}.accelerator-panel:before{opacity:.35}}
+
+/* Shareable editorial resources and low-friction worksheet navigation. */
+.editorial-article{max-width:980px}
+.editorial-article .resource-meta{margin:0 0 23px;color:#657692;font-size:13px}
+.editorial-article h2{margin-top:34px}
+.editorial-article h3{margin-top:23px}
+.editorial-article ul,.editorial-article ol{padding-left:24px}
+.editorial-article li{padding-left:6px;margin:0 0 16px}
+.editorial-article .checklist-steps li{padding-bottom:7px}
+.editorial-article a{text-decoration:underline;text-underline-offset:2px}
+.resource-callout{margin:25px 0;padding:24px 28px;background:#eef4fc;border-left:4px solid #3155e7;border-radius:7px}
+.resource-callout p:last-child{margin-bottom:0}
+@media(max-width:760px){.editorial-article .resource-callout{padding:19px}.editorial-article h2{margin-top:26px}}

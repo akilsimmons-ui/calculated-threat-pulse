@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip'
+      - '.github/workflows/bootstrap-source.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -22,7 +23,8 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .gitignore README.md build.py ai_draft.py config.json assets tests .github/workflows/update-feed.yml public
+          git add .gitignore README.md build.py ai_draft.py config.json assets tests .github/workflows/update-feed.yml
+          git add -f public
           git rm -f CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip
           if ! git diff --cached --quiet; then
             git commit -m 'site: import CalculatedIT Threat Pulse website and tools'

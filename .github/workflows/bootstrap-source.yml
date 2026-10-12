@@ -1,30 +1,32 @@
-name: Import verified starter source
+name: Import CalculatedIT Threat Pulse deployment kit
 on:
   push:
     paths:
-      - source-bundle.b64
+      - 'CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip'
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  unpack:
+  import:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Extract source and run tests
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Extract branded website and verify source
         run: |
-          base64 --decode source-bundle.b64 > /tmp/pulse-source.tar.gz
-          tar -xzf /tmp/pulse-source.tar.gz
+          test -f CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip
+          unzip -o CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip
           python3 -m unittest discover -s tests -v
           python3 build.py --fetch
-      - name: Commit site generator and generated pages
+      - name: Commit site source and pages
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add build.py ai_draft.py config.json assets tests .github/workflows/update-feed.yml .gitignore public
+          git add .gitignore README.md build.py ai_draft.py config.json assets tests .github/workflows/update-feed.yml public
+          git rm -f CalculatedIT_Threat_Pulse_Branded_Deployment_Kit.zip
           if ! git diff --cached --quiet; then
-            git commit -m 'site: import CalculatedIT Threat Pulse source and branded pages'
+            git commit -m 'site: import CalculatedIT Threat Pulse website and tools'
             git push
           else
-            echo 'No changes to commit'
+            echo 'No changes to commit.'
           fi

@@ -42,3 +42,19 @@
 .corporate-logo{width:205px;max-height:82px;object-fit:contain;background:#fff;padding:5px;border-radius:6px}
 @media(max-width:1150px){.nav{gap:18px}nav{gap:17px}.logo-graphic{width:185px;height:48px}.header .brand-copy small{font-size:10px}}
 @media(max-width:500px){.logo-graphic{width:175px;height:45px}.header .brand-copy small{font-size:10px}.corporate-logo{width:175px}}
+
+/* Clear, optional conversion path from free intelligence to paid RMF services. */
+.accelerator-section{padding:45px 0;background:#f3f6fb}
+.accelerator-panel{position:relative;overflow:hidden;background:linear-gradient(125deg,#0a1b35,#153864);color:#fff;border-radius:18px;border:1px solid #2b4c7a;box-shadow:0 14px 38px rgba(6,19,41,.16)}
+.accelerator-panel:before{content:"";position:absolute;right:-60px;top:-100px;width:310px;height:310px;border:1px solid rgba(129,174,255,.3);border-radius:50%;box-shadow:0 0 0 60px rgba(104,150,247,.035),0 0 0 130px rgba(104,150,247,.025);pointer-events:none}
+.accelerator-copy{position:relative;padding:38px 44px;max-width:920px}
+.accelerator-eyebrow{display:inline-block;color:#9cd9ff;font-size:12px;letter-spacing:.12em;font-weight:800;margin-bottom:11px}
+.accelerator-section h2{margin:0 0 15px;font-size:clamp(25px,3vw,36px);line-height:1.18;color:#fff}
+.accelerator-section p{margin:0 0 18px;font-size:16px;line-height:1.65;color:#d7e5fa}
+.accelerator-actions{display:flex;align-items:center;gap:17px;flex-wrap:wrap;margin-top:20px}
+.accelerator-button{display:inline-block;padding:12px 19px;background:#fff;border-radius:8px;text-decoration:none;color:#112b51;font-size:14px;font-weight:800}
+.accelerator-button:hover,.accelerator-button:focus-visible{background:#d8e9ff;color:#112b51;text-decoration:none}
+.accelerator-link{color:#bde5ff;font-weight:750;text-decoration:underline;text-underline-offset:4px}
+.accelerator-link:hover,.accelerator-link:focus-visible{color:#fff}
+.accelerator-section .accelerator-note{margin:19px 0 0;color:#afc6e3;font-size:12px}
+@media(max-width:680px){.accelerator-section{padding:26px 0}.accelerator-copy{padding:28px 22px}.accelerator-panel:before{opacity:.35}}

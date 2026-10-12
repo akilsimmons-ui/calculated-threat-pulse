@@ -26,7 +26,7 @@ class TestSite(unittest.TestCase):
         head = build.chrome(cfg, 'Title', 'Description', '<p>Content</p>')
         self.assertIn('google-adsense-account', head)
         self.assertNotIn('pagead2.googlesyndication.com', head)
-        self.assertIn('Ads only appear', build.ad(cfg))
+        self.assertEqual(build.ad(cfg), '')
 
     def test_ads_txt_requires_real_publisher_id(self):
         self.assertEqual(build.ads_txt_line({}), '')

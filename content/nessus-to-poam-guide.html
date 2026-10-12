@@ -1,0 +1,33 @@
+<section class="simple-hero"><div class="wrap"><div class="eyebrow">RMF OPERATIONS · EVIDENCE QUALITY</div><h1>From Nessus or ACAS findings to reviewable POA&amp;M evidence</h1><p class="lead">How to keep vulnerability evidence traceable, avoid invented control mappings, and build an action plan a reviewer can actually follow.</p></div></section>
+<section class="wrap section prose editorial-article">
+<p class="resource-meta"><strong>CalculatedIT Threat Pulse editorial resource</strong> · Practical RMF documentation workflow · No customer uploads required</p>
+<h2>Why exporting scan findings is not the finish line</h2>
+<p>A Nessus or ACAS export is a snapshot of what a particular scan observed with a particular plugin set, credential level, and scope. A Plan of Action and Milestones (POA&amp;M) is an accountable plan for addressing identified weaknesses. The two are related but they are not interchangeable. A useful record connects the technical observation to a specific asset, a defensible remediation action, an owner, a milestone, and a way to verify closure.</p>
+<p>Under NIST's terminology, a POA&amp;M identifies tasks, resources, milestones, and scheduled completion dates. A scanner finding may provide input to that plan, but does not necessarily establish affected systems, underlying causes, authorization boundaries, or applicable security control identifiers. Those details need to be verified from the actual environment and approved assessment context.</p>
+<h2>Start with these six evidence fields</h2>
+<ol class="checklist-steps">
+<li><strong>Source and acquisition context.</strong> Preserve the scan date, scanner/tool version when available, plugin identifier, file provenance, scan policy, credentialed or uncredentialed status, and assessment scope. Store the original export in approved access-controlled storage.</li>
+<li><strong>System and asset identity.</strong> Normalize the hostname, IP, asset ID, owning system, and authorization boundary without guessing that similarly named assets are the same. Record unmatched or ambiguous identifiers for human review.</li>
+<li><strong>Observation.</strong> Preserve the original plugin title, observed output, severity and vulnerability reference identifiers exactly as provided. Distinguish scanner-reported conditions from independently verified conditions.</li>
+<li><strong>Applicability and risk context.</strong> Determine if the finding remains present, is a duplicate, represents a false positive, is mitigated by configuration, or is out of scope. Keep supporting observations and the decision-maker, not just the conclusion.</li>
+<li><strong>Action and ownership.</strong> Describe the approved action, responsible team, resources or dependencies, checkpoints, and target date. For unresolved weaknesses, capture an explicit risk-acceptance or exception path if authorized.</li>
+<li><strong>Validation and closure.</strong> Link a post-change result, configuration check, independent verification, reviewer, and closure date. Leave open items open when evidence is insufficient.</li>
+</ol>
+<h2>Build a traceable chain</h2>
+<div class="resource-callout"><p><strong>Input:</strong> sanitized scan finding + defined system boundary + applicable RMF/POA&amp;M context.</p><p><strong>Normalize:</strong> consistent asset and vulnerability identifiers; preserve raw details and any uncertainty.</p><p><strong>Draft:</strong> clear weakness statement, planned correction, ownership and milestones, with source references.</p><p><strong>Review:</strong> authorized human validates relevance, control relationships, format, and completion evidence.</p><p><strong>Output:</strong> customer-approved POA&amp;M or evidence package, not an automatically certified system.</p></div>
+<h2>Four common failure modes</h2>
+<h3>1. Guessing control relationships</h3>
+<p>A plugin-to-NIST-control relationship may depend on the system, control implementation, assessment objective, and customer-approved crosswalk. Never fabricate a control identifier to complete a row. Clearly label mappings as draft or unresolved until confirmed against relevant policy and the actual assessment package.</p>
+<h3>2. Losing the raw finding</h3>
+<p>If an automated summary omits plugin output, host details, or time of observation, the reviewer cannot reproduce your reasoning. Preserve links or immutable references to the original restricted evidence. Do not expose security-sensitive scan content on a marketing website.</p>
+<h3>3. Confusing suggested mitigation with validated remediation</h3>
+<p>A proposed PowerShell setting, registry change, or package upgrade is a recommendation. Execute only with change approval, environment-specific testing, and rollback. To close the item, verify the affected condition changed and record the result.</p>
+<h3>4. Exporting the wrong customer format</h3>
+<p>Required fields, identifiers, milestones, and formats vary by agency, contract, system, and tooling workflow. Validate a sanitized sample against the customer's approved import template before describing an export as compatible with eMASS or another GRC system.</p>
+<h2>Practical quality metrics</h2>
+<p>For one representative set of sanitized findings, measure the manual baseline minutes required to normalize, draft, and verify entries; then compare the assisted workflow. Count unresolved mappings and reviewer corrections separately. A fast export with incorrect mappings or missing evidence is not a successful acceleration.</p>
+<h2>Primary references</h2>
+<p><a href="https://csrc.nist.gov/glossary/term/Plan_of_Action_and_Milestones" target="_blank" rel="noopener">NIST POA&amp;M definition</a> · <a href="https://csrc.nist.gov/pubs/sp/800/40/r4/final" target="_blank" rel="noopener">NIST SP 800-40 Rev. 4</a> · <a href="https://csrc.nist.gov/projects/open-security-controls-assessment-language" target="_blank" rel="noopener">NIST OSCAL, including POA&amp;M models</a>.</p>
+<p class="fine">This is an educational process guide; it does not certify controls, guarantee accreditation, or replace organizational reviewers and authorizing officials. No specific control mapping or evidence is asserted for any customer system.</p>
+<p><a href="/kev-triage-checklist.html">Get the free KEV triage worksheet →</a> &nbsp; <a href="/guides.html">Read more security guides →</a></p>
+</section>

@@ -5,17 +5,17 @@ severity ratings, affected-version matches, vendor fixes, or exploit claims.
 Existing pages remain stable and get refreshed when new KEV data arrives.
 No paid API, AI service, cookies, or new dependency.
 """
-import datetime as dt
 import json
 import re
 from pathlib import Path
 from urllib.parse import quote
+from storage_policy import CVE_PAGE_LIMIT
 
 CISA_CATALOG = "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
 CVE_PATTERN = re.compile(r"CVE-\d{4}-\d{4,}\Z")
 
 
-def _article(row, esc, updated, origin):
+def _article(row, esc, origin):
     cve = row["cveID"]
     vendor = row.get("vendorProject", "").strip() or "Vendor not specified"
     product = row.get("product", "").strip() or "Product not specified"
@@ -40,7 +40,6 @@ def _article(row, esc, updated, origin):
         "about": {"@type": "Thing", "name": cve, "sameAs": nvd},
         "author": {"@type": "Organization", "name": "CalculatedIT Threat Pulse", "url": origin},
         "publisher": {"@type": "Organization", "name": "Calculated Ventures, LLC", "url": "https://calculatedit.com/"},
-        "dateModified": updated,
         "isBasedOn": [CISA_CATALOG, nvd],
     }
     # Escape characters that could terminate a JSON script element in source data.
@@ -100,14 +99,19 @@ def build_cve_library(cfg, rows, public, chrome, esc, initial_limit=24):
     by_id = {r["cveID"]: r for r in rows if CVE_PATTERN.fullmatch(r.get("cveID", "")) and r.get("shortDescription", "").strip()}
     initial = [r["cveID"] for r in rows if r["cveID"] in by_id][:initial_limit]
     previous = [p.stem for p in directory.glob("CVE-*.html") if CVE_PATTERN.fullmatch(p.stem)]
-    selected = set(initial + previous)
-    build_day = dt.datetime.now(dt.timezone.utc).date().isoformat()
+    if len(previous) > CVE_PAGE_LIMIT:
+        raise RuntimeError("Existing CVE page count exceeds storage policy; review before publishing.")
+    remaining = max(0, CVE_PAGE_LIMIT - len(previous))
+    new_ids = [cve for cve in initial if cve not in previous][:remaining]
+    if len(new_ids) < len([cve for cve in initial if cve not in previous]):
+        print(f"CVE page limit ({CVE_PAGE_LIMIT}) reached; retaining existing pages and updating the live feed.")
+    selected = set(previous + new_ids)
     published = []
     for cve in selected:
         row = by_id.get(cve)
         if not row:
             continue
-        title, description, body = _article(row, esc, build_day, origin)
+        title, description, body = _article(row, esc, origin)
         path = "/cve/" + cve + ".html"
         (directory / (cve + ".html")).write_text(chrome(cfg, title, description, body, path), encoding="utf-8")
         published.append(row)

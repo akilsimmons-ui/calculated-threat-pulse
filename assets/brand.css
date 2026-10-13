@@ -156,3 +156,33 @@ body{background:#fcfdff}
 @media(max-width:850px){.hero-refresh{padding:62px 0 65px}.hero-refresh .hero-grid{grid-template-columns:1fr}.explore-grid{grid-template-columns:1fr}.explore-tile:last-child{grid-column:auto}.hero-refresh .hero-intro{max-width:710px}.hero-refresh .hero-panel{max-width:none}}
 @media(max-width:560px){.hero-refresh h1{font-size:43px}.hero-highlights span{font-size:11px}.hero-sidecar{grid-template-columns:60px 1fr;padding:14px}.hero-refresh .eyebrow{font-size:10px}.explore-band{padding-top:20px}.explore-tile{padding:16px}}
 @media(prefers-reduced-motion:reduce){.feature,.threat-card,.explore-tile,.header nav a:after{transition:none!important}.feature:hover,.threat-card:hover,.explore-tile:hover{transform:none}}
+
+
+/* Source-traceable CVE research library — responsive, compact editorial layout. */
+.cve-subhead{color:#c7dcff;font-size:16px;font-weight:750}
+.cve-breadcrumb{margin:19px 0 0;font-size:13px}
+.cve-breadcrumb a{color:#cce0ff;text-decoration:underline;text-underline-offset:3px}
+.cve-article{max-width:1190px}
+.cve-article-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:39px;align-items:start}
+.cve-article h2{font-size:clamp(23px,2.2vw,30px);margin:31px 0 14px}
+.cve-article h2:first-child{margin-top:0}
+.cve-article ol{padding-left:24px}
+.cve-article li{margin-bottom:18px;line-height:1.7}
+.cve-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:24px 0 29px}
+.cve-facts>div{padding:16px 18px;background:#f3f7fd;border:1px solid #dfe8f4;border-radius:10px}
+.cve-facts small{display:block;color:#566780;font-size:12px;margin-bottom:7px}
+.cve-facts strong{font-size:14px;display:block;overflow-wrap:anywhere;color:#14294d}
+.cve-sources{padding:25px 22px;border-radius:14px;background:#0e2244;color:#d7e4f7;box-shadow:0 11px 28px rgba(18,38,74,.1);position:sticky;top:22px}
+.cve-sources h3{color:#fff;font-size:19px;margin:0 0 11px}
+.cve-sources p{color:#d7e4f7;line-height:1.6;font-size:13px}
+.cve-sources a{display:block;padding:12px 13px;background:#1c3a66;color:#fff;border:1px solid #406496;border-radius:8px;margin:10px 0;font-size:13px;font-weight:750;text-decoration:underline}
+.cve-sources a:hover{background:#315788}
+.cve-sources .cve-disclaimer{font-size:11px;color:#b8cae4;margin-top:20px}
+.cve-library{max-width:1150px}
+.cve-list{list-style:none;padding-left:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.cve-list li{margin:0;padding:22px 24px;border:1px solid #dce6f4;background:white;border-radius:13px;box-shadow:0 6px 20px rgba(15,38,81,.05)}
+.cve-list a{color:#1e43a9;text-decoration:underline;text-underline-offset:3px;line-height:1.45}
+.cve-list p{font-size:13px;line-height:1.6;color:#42546f;margin:10px 0}
+.cve-list small{font-size:11px;color:#526583}
+@media(max-width:950px){.cve-article-grid{grid-template-columns:1fr}.cve-sources{position:static;max-width:620px}}
+@media(max-width:680px){.cve-facts,.cve-list{grid-template-columns:1fr}.cve-article-grid{gap:18px}.cve-facts>div{padding:13px 15px}}

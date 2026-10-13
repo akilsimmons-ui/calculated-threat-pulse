@@ -28,8 +28,9 @@ def _article(row, esc, updated, origin):
     deadline = row.get("dueDate", "").strip() or "Not specified"
     nvd = "https://nvd.nist.gov/vuln/detail/" + quote(cve)
     url = origin + "/cve/" + cve + ".html"
-    title = f"{cve}: {vendor} {product} | Known exploited vulnerability"
-    description = (f"{cve} CISA KEV entry for {vendor} {product}: catalog information, action, and a practical evidence-based triage checklist.")[:155]
+    product_label = vendor if vendor.casefold() == product.casefold() else f"{vendor} {product}"
+    title = f"{cve}: {product_label} | Known exploited vulnerability"
+    description = (f"{cve} CISA KEV entry for {product_label}: catalog information, action, and a practical evidence-based triage checklist.")[:155]
     schema = {
         "@context": "https://schema.org",
         "@type": "TechArticle",

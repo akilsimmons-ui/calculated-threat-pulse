@@ -6,6 +6,8 @@ on:
       - 'build.py'
       - 'site_rollups.py'
       - 'cve_pages.py'
+      - 'storage_policy.py'
+      - 'STORAGE_POLICY.md'
       - 'config.json'
       - 'tests/**'
       - 'assets/**'

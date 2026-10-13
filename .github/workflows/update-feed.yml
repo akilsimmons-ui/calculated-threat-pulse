@@ -5,6 +5,7 @@ on:
       - '.github/workflows/update-feed.yml'
       - 'build.py'
       - 'site_rollups.py'
+      - 'cve_pages.py'
       - 'config.json'
       - 'tests/**'
       - 'assets/**'

@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import quote
 from site_rollups import build_weekly, build_rss
 from cve_pages import build_cve_library
+from storage_policy import RECENT_RECORD_LIMIT, check_source_budget, check_public_budget
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
@@ -156,11 +157,12 @@ def alert_card(r):
 
 def build():
     cfg = json.loads((ROOT / 'config.json').read_text(encoding='utf-8'))
+    check_source_budget(DATA)
     PUBLIC.mkdir(parents=True, exist_ok=True)
     shutil.copytree(ROOT / 'assets', PUBLIC / 'assets', dirs_exist_ok=True)
     rows, released, version = load_data()
     (PUBLIC / 'data').mkdir(exist_ok=True)
-    (PUBLIC / 'data' / 'kev.json').write_text(json.dumps({'source': CISA_URL, 'dateReleased': released, 'catalogVersion': version, 'vulnerabilities': rows[:200]}, ensure_ascii=False), encoding='utf-8')
+    (PUBLIC / 'data' / 'kev.json').write_text(json.dumps({'source': CISA_URL, 'dateReleased': released, 'catalogVersion': version, 'vulnerabilities': rows[:RECENT_RECORD_LIMIT]}, ensure_ascii=False), encoding='utf-8')
     cve_pages = build_cve_library(cfg, rows, PUBLIC, chrome, esc)
     cards = ''.join(alert_card(r) for r in rows[:6]) if rows else '<div class="empty">Threat data hasn’t been downloaded yet. Run <code>python build.py --fetch</code> when connected to the internet, or enable the daily GitHub Actions workflow.</div>'
     today = dt.datetime.now(dt.timezone.utc).strftime('%B %d, %Y')
@@ -183,7 +185,7 @@ def build():
         body = body.replace(old, new, 1)
     write_page(cfg, 'index.html', 'Daily security intelligence & free tools', 'Practical free security tools and automatically refreshed CISA KEV alerts for small IT teams.', body)
 
-    alerts = ''.join(alert_card(r) for r in rows[:200]) if rows else '<p class="empty">No official feed was cached. Contact the operator or check CISA directly for the latest updates.</p>'
+    alerts = ''.join(alert_card(r) for r in rows[:RECENT_RECORD_LIMIT]) if rows else '<p class="empty">No official feed was cached. Contact the operator or check CISA directly for the latest updates.</p>'
     body = f'''<section class="simple-hero"><div class="wrap"><div class="eyebrow">SOURCE-TRACEABLE INTELLIGENCE</div><h1>Known exploited vulnerabilities</h1><p class="lead">Browse recently added records in CISA's KEV catalog. Search below for a CVE, vendor, or product. Data is not a complete inventory of vulnerabilities.</p></div></section><section class="wrap section"><div class="filterline"><label for="search">Filter advisories</label><input id="search" placeholder="Try a CVE, vendor, or product..." aria-label="Filter advisories"><span id="count" aria-live="polite"></span></div><div class="cardgrid" id="alerts">{alerts}</div><p class="source-note">Displaying up to 200 most recent catalog records. Date added to catalog is not the date of initial exploitation. Source: <a href="{esc(CISA_URL)}">CISA JSON</a>. Catalog edition {esc(version or 'not loaded')}. <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">Read CISA's guidance</a>.</p>{ad(cfg)}</section><script src="/assets/app.js" defer></script>'''
     write_page(cfg, 'alerts.html', 'CISA known exploited vulnerabilities', 'Search up to 200 recent CISA known exploited vulnerability records by CVE, product or vendor.', body)
 
@@ -265,6 +267,8 @@ def build():
         (PUBLIC / 'ads.txt').write_text(ads_line, encoding='utf-8')
     else:
         (PUBLIC / 'ads.txt').unlink(missing_ok=True)
+    published_bytes = check_public_budget(PUBLIC)
+    print(f'Published content: {published_bytes:,} bytes (25 MiB cap).')
     print(f'Built {len(list(PUBLIC.glob("*.html")))} pages. Cached vulnerabilities: {len(rows)}. AdSense: {"configured" if cfg.get("adsense_publisher_id") else "disabled"}.')
 
 

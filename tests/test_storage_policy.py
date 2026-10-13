@@ -48,7 +48,7 @@ class TestStoragePolicy(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             raw = root / "kev.json"
-            raw.write_bytes(b"valid-bytes")
+            raw.write_bytes(b"1234567890")
             with patch.object(storage_policy, "MAX_SOURCE_BYTES", 10):
                 self.assertIsNone(storage_policy.check_source_budget(raw))
                 raw.write_bytes(b"longer-than-budget")

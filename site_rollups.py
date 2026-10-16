@@ -88,7 +88,7 @@ def build_rss(rows, origin):
         )
     return (
         '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>'
-        '<title>CalculatedIT Threat Pulse — CISA KEV additions</title>'
+        '<title>Threat Pulse — CISA KEV additions</title>'
         f'<link>{esc(origin + "/alerts.html")}</link>'
         '<description>Source-traceable CISA catalog additions; not environment-specific findings.</description>'
         '<language>en-us</language>' + ''.join(items) + '</channel></rss>'

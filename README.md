@@ -1,4 +1,4 @@
-# CalculatedIT Threat Pulse — Free cybersecurity tools and exploited vulnerability alerts
+# Threat Pulse — Free cybersecurity tools and exploited vulnerability alerts
 
 **[Explore the live Threat Pulse website](https://pulse.calculatedit.com/)** · [CVE research library](https://pulse.calculatedit.com/cve/index.html) · [Free tools](https://pulse.calculatedit.com/tools.html) · [KEV triage checklist](https://pulse.calculatedit.com/kev-triage-checklist.html)
 
@@ -9,7 +9,7 @@ Threat Pulse helps IT teams and home users explore source-based cybersecurity al
 ## Maintainer notes
 
 **Owner:** Calculated Ventures, LLC  
-**Purpose:** A separate, ad-supported security publication under the **CalculatedIT / Calculated Ventures** brand. It shares the corporate identity but remains in its **own GitHub repository** and has no access to RMF Accelerator code. The project is not a confirmed income source and does not replicate the unverified NASA-glitch advertisement.
+**Purpose:** A separate, ad-supported security publication under the **Calculated Ventures** brand. It shares the corporate identity but remains in its **own GitHub repository** and has no access to RMF Accelerator code. The project is not a confirmed income source and does not replicate the unverified NASA-glitch advertisement.
 
 ## Live deployment (Render static site)
 
@@ -30,7 +30,7 @@ This publication must offer substantial, truthful editorial utility beyond CISA'
 
 ## Branding and hosting
 
-- Name: **CalculatedIT Threat Pulse**. Parent/operator: Calculated Ventures, LLC.
+- Name: **Threat Pulse**. Parent/operator: Calculated Ventures, LLC.
 - Corporate identity is shared through the brand palette and an image linked from the live Calculated Ventures website.
 - The source stays separate from the private RMF Accelerator software. Do not copy credentials, Nessus data, scripts, or client material into a public repo.
 - The live site uses a Render-provided static hostname plus the existing `pulse.calculatedit.com` custom subdomain; no new domain purchase was necessary.

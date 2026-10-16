@@ -38,7 +38,7 @@ def _article(row, esc, origin):
         "description": description,
         "mainEntityOfPage": {"@type": "WebPage", "@id": url},
         "about": {"@type": "Thing", "name": cve, "sameAs": nvd},
-        "author": {"@type": "Organization", "name": "CalculatedIT Threat Pulse", "url": origin},
+        "author": {"@type": "Organization", "name": "Threat Pulse", "url": origin},
         "publisher": {"@type": "Organization", "name": "Calculated Ventures, LLC", "url": "https://calculatedit.com/"},
         "isBasedOn": [CISA_CATALOG, nvd],
     }
@@ -77,7 +77,7 @@ def _article(row, esc, origin):
 <p>These references let you check updates, product applicability, and recommendations independently.</p>
 <a href="{esc(CISA_CATALOG)}" target="_blank" rel="noopener">CISA KEV catalog ↗</a>
 <a href="{esc(nvd)}" target="_blank" rel="noopener">NVD: {esc(cve)} ↗</a>
-<p class="cve-disclaimer">CalculatedIT adds a triage workflow but does not issue vulnerability scores or claim your environment is affected. Vendor instructions and your organization's policies govern remediation.</p>
+<p class="cve-disclaimer">Threat Pulse provides a triage workflow but does not issue vulnerability scores or claim your environment is affected. Vendor instructions and your organization's policies govern remediation.</p>
 </aside></div></section>
 <script type="application/ld+json">{structured}</script>'''
     return title, description, body

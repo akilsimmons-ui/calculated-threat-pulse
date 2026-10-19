@@ -51,7 +51,8 @@ class TestSite(unittest.TestCase):
             with patch.object(build, 'PUBLIC', Path(tmp)):
                 build.build()
                 page = (Path(tmp) / 'index.html').read_text(encoding='utf-8')
-            self.assertRegex(page, r'Site refreshed \\(UTC\\)</small><b>[A-Za-z]+ \\d{2}, \\d{4}</b>')
+            self.assertIn('Site refreshed (UTC)</small><b>', page)
+            self.assertIn(dt.datetime.now(dt.timezone.utc).strftime('%B %d, %Y'), page)
             self.assertIn('Latest CISA addition</small><b>', page)
             self.assertIn('CISA catalog edition:', page)
             self.assertNotIn('<small>Feed edition</small>', page)

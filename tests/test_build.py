@@ -46,6 +46,16 @@ class TestSite(unittest.TestCase):
             self.assertIn('h1>', page)
         self.assertIn('CVE,Asset ID', (root / 'assets/kev-triage-template.csv').read_text())
 
+    def test_homepage_shows_refresh_date_separately_from_cisa_release(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(build, 'PUBLIC', Path(tmp)):
+                build.build()
+                page = (Path(tmp) / 'index.html').read_text(encoding='utf-8')
+            self.assertRegex(page, r'Site refreshed \\(UTC\\)</small><b>[A-Za-z]+ \\d{2}, \\d{4}</b>')
+            self.assertIn('Latest CISA addition</small><b>', page)
+            self.assertIn('CISA catalog edition:', page)
+            self.assertNotIn('<small>Feed edition</small>', page)
+
     def test_social_metadata_and_canonical(self):
         cfg = {'site_name':'Test Pulse', 'site_url':'https://pulse.example.test', 'ads_enabled':False}
         page = build.chrome(cfg, 'Useful checklist', 'A practical original guide.', '<p>Guide</p>',

@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
-from site_rollups import build_weekly, build_rss
+from site_rollups import build_weekly, build_rss, recent_additions
 import datetime as dt
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -56,6 +56,28 @@ class TestSite(unittest.TestCase):
             self.assertIn('Latest CISA addition</small><b>', page)
             self.assertIn('CISA catalog edition:', page)
             self.assertNotIn('<small>Feed edition</small>', page)
+            today_date = dt.datetime.now(dt.timezone.utc).date()
+            rows, _, _ = build.load_data()
+            expected = len(recent_additions(rows, today_date))
+            self.assertIn(f'<div class="bigstat">{expected:,}<span>new in 7 days</span>', page)
+            self.assertIn(f'Total CISA KEV catalog: {len(rows):,} vulnerabilities.', page)
+            self.assertNotIn('<span>tracked</span>', page)
+
+    def test_recent_additions_matches_seven_day_utc_briefing_window(self):
+        as_of = dt.date(2026, 10, 26)
+        days = [
+            '2026-10-19',  # Older than the seven-day calendar window
+            '2026-10-20',  # Start of the seven-day window
+            '2026-10-23',
+            '2026-10-26',  # Today
+            '2026-10-27',  # Future-dated entry must not count
+        ]
+        rows = [{'dateAdded': day} for day in days]
+        self.assertEqual(
+            [r['dateAdded'] for r in recent_additions(rows, as_of)],
+            ['2026-10-20', '2026-10-23', '2026-10-26']
+        )
+        self.assertEqual(recent_additions([], as_of), [])
 
     def test_social_metadata_and_canonical(self):
         cfg = {'site_name':'Test Pulse', 'site_url':'https://pulse.example.test', 'ads_enabled':False}

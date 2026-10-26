@@ -11,10 +11,17 @@ def esc(value):
     return html.escape(str(value or ''), quote=True)
 
 
+def recent_additions(rows, today=None):
+    """Records added during the current seven UTC calendar days, including today."""
+    today = today or dt.datetime.now(dt.timezone.utc).date()
+    start = today - dt.timedelta(days=6)
+    return [r for r in rows if start.isoformat() <= r['dateAdded'] <= today.isoformat()]
+
+
 def build_weekly(rows, version, released, today=None):
     today = today or dt.datetime.now(dt.timezone.utc).date()
     start = today - dt.timedelta(days=6)
-    recent = [r for r in rows if start.isoformat() <= r['dateAdded'] <= today.isoformat()]
+    recent = recent_additions(rows, today)
     if recent:
         summary = f'{len(recent)} KEV catalog entries were added during this seven-day window.'
     else:
